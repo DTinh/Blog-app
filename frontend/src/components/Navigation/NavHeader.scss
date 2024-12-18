@@ -1,0 +1,35 @@
+
+ .nav-header{
+    .bg-header{
+      background-color: #61dafb;
+    }
+    .navbar-brand{
+      color: #333 !important;
+
+      // img{
+      //   animation: App-logo-spin infinite 20s linear;
+      // }
+    }
+    .navbar-nav{
+      .navlink{
+        color: #333 !important;
+
+        &:hover{
+          color: #61dafb !important;
+        }
+      }
+    }
+  
+    .nav-link{
+      &:active{
+        color: red !important ;
+      }
+    }
+
+    .nav-search{
+      margin-right: 45px;
+    }
+    
+ }
+  
+ 
