@@ -1,0 +1,15 @@
+
+    .image-detail {
+        width: 80%; 
+        height: 300px; 
+        background-size: cover; 
+        background-position: center center; /* Căn giữa cả chiều ngang và dọc */
+        background-repeat: no-repeat; 
+        border-top-left-radius: 0.25rem; 
+        border-top-right-radius: 0.25rem;
+    
+        display: flex; /* Tạo một layout flexbox */
+        justify-content: center; /* Căn giữa theo chiều ngang */
+        align-items: center; /* Căn giữa theo chiều dọc */
+    }
+    

@@ -15,14 +15,7 @@ const NavHeader = (props) => {
     // if (user && user.isAuthenticated === true || location.pathname === '/') {
     return (
         <>
-            {/* <div className="topnav">
-                <NavLink to="/" exact>Home</NavLink>
-                <NavLink to="/users">User</NavLink>
-                <NavLink to="/projects">Project</NavLink>
-                <NavLink to="/about">About</NavLink>
-            </div> */}
-
-            <div className='nav-header'>
+            <div className='nav-header fixed-top'>
                 <Navbar expand="lg" className="bg-header">
                     <Container>
                         <Navbar.Brand href="/">Blog App
@@ -47,7 +40,8 @@ const NavHeader = (props) => {
                                         />
                                     </Col>
                                     <Col xs="auto">
-                                        <Button type="submit" variant="light" href="/create" >Create</Button>
+                                        <Button type="submit" variant="light"
+                                        >Search</Button>
                                     </Col>
                                 </Row>
                             </Form>

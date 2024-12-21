@@ -1,0 +1,35 @@
+.add-post-btn {
+    position: fixed;
+    top: 80px; 
+    right: 20px;
+    z-index: 1000; 
+    border-radius: 50%; 
+    width: 60px; 
+    height: 60px; 
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    background-color: #61dafb;
+    border: none;
+
+    i {
+        opacity: 0.6; 
+        font-size: 25px; 
+        &:hover {
+            opacity: 1; 
+            font-size: 30px; 
+        }
+    }
+    
+  
+}
+.image-post {
+    width: 100%; 
+    height: 200px; 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    border-top-left-radius: 0.25rem; 
+    border-top-right-radius: 0.25rem;
+}

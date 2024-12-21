@@ -1,0 +1,16 @@
+
+
+.preview-image {
+    height: 50px;
+    width: 100%;
+    border: 1px solid #ddd;
+    background: center center no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    z-index: 1050; 
+}
+
+.react-lightbox__overlay {
+    z-index: 1050; /* Đặt z-index của Lightbox cao hơn modal */
+}
+
