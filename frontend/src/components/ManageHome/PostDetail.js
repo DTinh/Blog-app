@@ -2,14 +2,22 @@
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
-import { getDetailPosts } from '../../services/apiServices';
+import { getDetailPosts, deletePost } from '../../services/apiServices';
 import { Buffer } from 'buffer';
 import './PostDetail.scss';
+import ModalDelete from './ModalDelete';
+import ModalPost from '../ManageHome/ModalPost';
+import { useHistory } from "react-router-dom";
+
 const PostDetail = (props) => {
     const [detailPost, setDetailPost] = useState([]);
     const { id } = props.match.params;
-
-    // const [isShowModalPost, setIsShowModalPost] = useState(false);
+    const [isShowModalDelete, setIsShowModalDelete] = useState(false);
+    const [dataModalDelete, setDataModalDelete] = useState({});
+    const [dataModalPost, setDataModalPost] = useState();
+    const [isShowModalPost, setIsShowModalPost] = useState(false);
+    const [actionModalPost, setActionModalPost] = useState('UPDATE');
+    const history = useHistory();
 
     useEffect(() => {
         fetchDetailPosts();
@@ -21,9 +29,33 @@ const PostDetail = (props) => {
             setDetailPost([res.data]);
         }
     }
+    const handleDeletePost = async (post) => {
+        setIsShowModalDelete(true);
+        setDataModalDelete(post);
+    }
+    const handleClose = async () => {
+        setIsShowModalDelete(false);
+        setIsShowModalPost(false);
+        await fetchDetailPosts();
+    }
+    const confirmDeletePost = async () => {
+        let res = await deletePost(dataModalDelete);
+        if (res && res.errCode === 0) {
+            history.push("/");
+            setIsShowModalDelete(false);
+            toast.success(res.errMessage);
+        } else {
+            toast.error(res.errMessage);
+        }
+    }
+    const handleEditPost = (post) => {
+        setDataModalPost(post);
+        setIsShowModalPost(true);
+        setActionModalPost('UPDATE');
+    }
     return (
         <>
-            <div className="container mt-4 pt-5">
+            <div className="container mt-4 pt-3">
                 <div className="row">
                     {detailPost && detailPost.length > 0 &&
                         detailPost.map((item, index) => {
@@ -47,23 +79,28 @@ const PostDetail = (props) => {
                                                     return (
                                                         <div key={index} className="col-lg-12">
                                                             <h1 className="mb-4">{item.title}</h1>
-
-                                                            {/* Image Section */}
                                                             <div
                                                                 className='image-detail mb-4'
                                                                 style={{ backgroundImage: `url(${imageBase64})` }}
                                                             ></div>
-
-                                                            {/* Post Metadata */}
                                                             <p className="text-muted">Tác giả: {"Admin"} | Ngày đăng: {formattedDate}</p>
-
-                                                            {/* Post Content */}
                                                             <div className="content">
                                                                 <div dangerouslySetInnerHTML={{ __html: item.contentHTML }}></div>
                                                             </div>
 
-                                                            {/* Back Button */}
                                                             <div className="mt-4 text-end">
+                                                                <button
+                                                                    className="btn btn-danger"
+                                                                    onClick={() => handleDeletePost(item)}
+                                                                >
+                                                                    Xóa
+                                                                </button>
+                                                                <button
+                                                                    className="btn btn-warning mx-2"
+                                                                    onClick={() => handleEditPost(item)}
+                                                                >
+                                                                    Sửa
+                                                                </button>
                                                                 <button
                                                                     className="btn btn-secondary"
                                                                     onClick={() => window.history.back()}
@@ -77,6 +114,19 @@ const PostDetail = (props) => {
                                             }
                                         </div>
                                     </div>
+                                    <ModalDelete
+                                        show={isShowModalDelete}
+                                        handleClose={handleClose}
+                                        confirmDeletePost={confirmDeletePost}
+                                        dataModalDelete={dataModalDelete}
+                                    />
+                                    <ModalPost
+                                        show={isShowModalPost}
+                                        handleClose={handleClose}
+                                        action={actionModalPost}
+                                        dataModalPost={dataModalPost}
+                                        fetchDetailPosts={fetchDetailPosts}
+                                    />
                                 </>
                             );
                         })

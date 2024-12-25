@@ -76,6 +76,7 @@ const createNewPost = async (data) => {
 
         }
     } catch (e) {
+        console.log(e);
         return {
             errCode: 1,
             errMessage: 'something wrongs with services',
@@ -83,6 +84,77 @@ const createNewPost = async (data) => {
         }
     }
 }
+const deletePost = async (id) => {
+    try {
+        let post = await db.Post.findOne({
+            where: { id: id }
+        })
+        if (!post) {
+            return {
+                errCode: 2,
+                errMessage: 'The post not fonud',
+            }
+        } else {
+            await db.Post.destroy({
+                where: { id: id }
+            })
+            return {
+                errCode: 0,
+                errMessage: 'Delete a post suceed!',
+                data: []
+            }
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            errCode: 1,
+            errMessage: 'something wrongs with services',
+            data: []
+        }
+    }
+}
+const updatePost = async (data) => {
+    try {
+        if (!data.id) {
+            return {
+                errCode: 1,
+                errMessage: 'Missing require prameter',
+                data: ''
+            }
+        }
+        let post = await db.Post.findOne({
+            where: { id: data.id }
+        })
+        if (post) {
+            await db.Post.update({
+                title: data.title,
+                description: data.description,
+                contentHTML: data.contentHTML,
+                contentMarkdown: data.contentMarkdown,
+                image: data.image
+            }, { where: { id: data.id } })
+            return {
+                errCode: 0,
+                errMessage: 'Update user succeed',
+                data: ''
+            }
+        } else {
+            return {
+                errCode: 2,
+                errMessage: 'Post not fonud',
+                data: ''
+            }
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            errCode: 1,
+            errMessage: 'something wrongs with services',
+            data: []
+        }
+    }
+
+}
 module.exports = {
-    getAllPost, createNewPost, getDetailPost
+    getAllPost, createNewPost, getDetailPost, deletePost, updatePost
 }

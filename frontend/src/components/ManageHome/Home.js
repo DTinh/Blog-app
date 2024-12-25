@@ -20,6 +20,7 @@ const Home = (props) => {
     }
     const handleCreatePost = () => {
         setIsShowModalPost(true);
+        fetchPosts();
     }
     const handleClose = () => {
         setIsShowModalPost(false)
@@ -77,6 +78,7 @@ const Home = (props) => {
             <ModalPost
                 show={isShowModalPost}
                 handleClose={handleClose}
+                fetchPosts={fetchPosts}
             />
 
         </>

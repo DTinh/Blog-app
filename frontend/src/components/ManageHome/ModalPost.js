@@ -5,20 +5,18 @@ import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import _ from 'lodash';
-import { createNewPost } from '../../services/apiServices';
+import { createNewPost, updatePost } from '../../services/apiServices';
 import { toast } from 'react-toastify';
 import CommonUtils from '../../utils/CommonUtils';
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 import './ModalPost.scss';
+import { Buffer } from 'buffer';
 
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 const ModalPost = (props) => {
-    // const [title, setTitle] = useState("");
-    // const [description, setDescription] = useState("");
-    // const [contentMarkdown, setContentMarkdown] = useState("");
-    // const [contentHTML, setContentHTMl] = useState("");
+    const { action, dataModalPost } = props;
 
     const defaultPostData = {
         title: '',
@@ -28,15 +26,27 @@ const ModalPost = (props) => {
         image: ''
     }
     const [postData, setPostData] = useState(defaultPostData);
-    const [isOpenReviewImg, setIsOpenReviewImg] = useState(false);
+    // const [isOpenReviewImg, setIsOpenReviewImg] = useState(false);
+    useEffect(() => {
+        if (action === 'UPDATE' && dataModalPost) {
+            let imageBase64 = '';
+            if (dataModalPost.image) {
+                imageBase64 = new Buffer(dataModalPost.image, 'base64').toString('binary');
+            }
+            setPostData({
+                ...dataModalPost,
+                image: imageBase64,
+            });
+            console.log('check dataModalPost', dataModalPost);
 
+        }
+    }, [dataModalPost])
     const handleEditorChange = ({ html, text }) => {
         setPostData((prev) => ({
             ...prev,
             contentHTML: html,
             contentMarkdown: text
         }));
-        // console.log('handleEditorChange', html, text);
     }
     const handleOnchangeImage = async (event) => {
         let data = event.target.files;
@@ -52,13 +62,13 @@ const ModalPost = (props) => {
             }));
         }
     }
-    const openPreviewImage = () => {
-        if (!postData.previewImgURL) return;
-        setIsOpenReviewImg(true)
-        // console.log('Opening lightbox with image:', postData.previewImgURL);
-        console.log("check isOpenReviewImg", isOpenReviewImg);
+    // const openPreviewImage = () => {
+    //     if (!postData.previewImgURL) return;
+    //     setIsOpenReviewImg(true)
+    //     // console.log('Opening lightbox with image:', postData.previewImgURL);
+    //     console.log("check isOpenReviewImg", isOpenReviewImg);
 
-    }
+    // }
     const handleCloseModalPost = () => {
         props.handleClose();
     }
@@ -68,19 +78,28 @@ const ModalPost = (props) => {
         setPostData(_postData);
     }
     const handleConfirmPost = async () => {
-        let res = await createNewPost(postData);
+        let res = action === 'UPDATE' ?
+            await updatePost(postData)
+            : await createNewPost(postData);
         if (res && res.errCode === 0) {
             toast.success(res.errMessage);
             setPostData(defaultPostData);
             props.handleClose();
+            {
+                action === 'UPDATE' ?
+                    props.fetchDetailPosts()
+                    :
+                    props.fetchPosts()
+            }
         }
     }
+
     return (
         <>
             <Modal size="lg" show={props.show} onHide={() => handleCloseModalPost()} className="modal-user">
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        <span>Create a new post</span>
+                        <span>{props.action === 'UPDATE' ? 'Update post' : 'Create a new post'}</span>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -92,9 +111,8 @@ const ModalPost = (props) => {
                             <input
                                 className="form-control"
                                 type="text"
-                                value={postData.title}
+                                value={postData?.title || ''}
                                 onChange={(event) => handleOnChangeInput(event.target.value, 'title')}
-
                             />
                         </div>
                         <div className='preview-img-container col-6 mt-3'>
@@ -103,8 +121,8 @@ const ModalPost = (props) => {
                             />
                             <label className='label-upload' htmlFor="previewImg">Tải ảnh <i className="fa fa-upload"></i></label>
                             <div className='preview-image'
-                                style={{ backgroundImage: `url(${postData.previewImgURL})` }}
-                                onClick={() => openPreviewImage()}
+                                style={{ backgroundImage: `url(${postData?.image || ''})` }}
+                            // onClick={() => openPreviewImage()}
                             >
                             </div>
                         </div>
@@ -115,7 +133,7 @@ const ModalPost = (props) => {
                             <textarea
                                 className="form-control"
                                 rows="3"
-                                value={postData.description}
+                                value={postData?.description || ''}
                                 onChange={(event) => handleOnChangeInput(event.target.value, 'description')}
 
                             />
@@ -126,7 +144,7 @@ const ModalPost = (props) => {
                     <MdEditor style={{ height: '300px' }}
                         renderHTML={text => mdParser.render(text)}
                         onChange={handleEditorChange}
-                        value={postData.contentMarkdown}
+                        value={postData?.contentMarkdown || ''}
                     />
                     {/* {isOpenReviewImg && (
                         <Lightbox
@@ -141,10 +159,10 @@ const ModalPost = (props) => {
                     >
                         Close
                     </Button>
-                    <Button variant="primary"
+                    <Button variant={props.action === 'UPDATE' ? 'warning' : "primary"}
                         onClick={() => handleConfirmPost()}
                     >
-                        Create
+                        {props.action === 'UPDATE' ? 'Update' : 'Create'}
                     </Button>
                 </Modal.Footer>
             </Modal>

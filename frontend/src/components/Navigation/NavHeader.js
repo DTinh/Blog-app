@@ -18,7 +18,9 @@ const NavHeader = (props) => {
             <div className='nav-header fixed-top'>
                 <Navbar expand="lg" className="bg-header">
                     <Container>
-                        <Navbar.Brand href="/">Blog App
+                        <Navbar.Brand href="/"
+                        >
+                            Blog App
                             <img className='mx-1'
                                 src={Logo}
                                 width='20'
