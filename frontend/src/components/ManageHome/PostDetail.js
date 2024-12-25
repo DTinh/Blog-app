@@ -17,12 +17,31 @@ const PostDetail = (props) => {
     const [dataModalPost, setDataModalPost] = useState();
     const [isShowModalPost, setIsShowModalPost] = useState(false);
     const [actionModalPost, setActionModalPost] = useState('UPDATE');
+    const [account, setAccount] = useState({});
+    const [isShow, setIsShow] = useState(true);
+
     const history = useHistory();
 
     useEffect(() => {
         fetchDetailPosts();
     }, [id])
-
+    useEffect(() => {
+        let session = sessionStorage.getItem("account");
+        if (session) {
+            setAccount(JSON.parse(session));
+        }
+    }, [])
+    useEffect(() => {
+        isShowDeUp();
+    }, [account])
+    const isShowDeUp = () => {
+        if (account && !_.isEmpty(account) && account.isAuthenticated) {
+            setIsShow(true)
+        } else {
+            setIsShow(false)
+        }
+        console.log(isShow);
+    }
     const fetchDetailPosts = async () => {
         let res = await getDetailPosts(id);
         if (res && res.errCode === 0) {
@@ -89,24 +108,36 @@ const PostDetail = (props) => {
                                                             </div>
 
                                                             <div className="mt-4 text-end">
-                                                                <button
-                                                                    className="btn btn-danger"
-                                                                    onClick={() => handleDeletePost(item)}
-                                                                >
-                                                                    Xóa
-                                                                </button>
-                                                                <button
-                                                                    className="btn btn-warning mx-2"
-                                                                    onClick={() => handleEditPost(item)}
-                                                                >
-                                                                    Sửa
-                                                                </button>
-                                                                <button
-                                                                    className="btn btn-secondary"
-                                                                    onClick={() => window.history.back()}
-                                                                >
-                                                                    Quay lại
-                                                                </button>
+                                                                {isShow ?
+                                                                    <>
+                                                                        <button
+                                                                            className="btn btn-danger"
+                                                                            onClick={() => handleDeletePost(item)}
+                                                                        >
+                                                                            Xóa
+                                                                        </button>
+                                                                        <button
+                                                                            className="btn btn-warning mx-2"
+                                                                            onClick={() => handleEditPost(item)}
+                                                                        >
+                                                                            Sửa
+                                                                        </button>
+                                                                        <button
+                                                                            className="btn btn-secondary"
+                                                                            onClick={() => window.history.back()}
+                                                                        >
+                                                                            Quay lại
+                                                                        </button>
+                                                                    </> :
+                                                                    <>
+                                                                        <button
+                                                                            className="btn btn-secondary"
+                                                                            onClick={() => window.history.back()}
+                                                                        >
+                                                                            Quay lại
+                                                                        </button>
+                                                                    </>
+                                                                }
                                                             </div>
                                                         </div>
                                                     );

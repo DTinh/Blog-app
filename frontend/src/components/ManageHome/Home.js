@@ -4,10 +4,13 @@ import { useEffect, useState } from 'react';
 import ModalPost from '../ManageHome/ModalPost';
 import { Buffer } from 'buffer';
 import { useHistory } from "react-router-dom";
+import _ from 'lodash';
+import { toast } from 'react-toastify';
 
 const Home = (props) => {
     const [listPost, setListPost] = useState([]);
     const [isShowModalPost, setIsShowModalPost] = useState(false);
+    const [account, setAccount] = useState({});
 
     useEffect(() => {
         fetchPosts();
@@ -18,9 +21,20 @@ const Home = (props) => {
             setListPost(res.data);
         }
     }
-    const handleCreatePost = () => {
-        setIsShowModalPost(true);
-        fetchPosts();
+    useEffect(() => {
+        let session = sessionStorage.getItem("account");
+        if (session) {
+            setAccount(JSON.parse(session));
+        }
+    })
+    const handleCreatePost = async () => {
+        if (account && !_.isEmpty(account) && account.isAuthenticated) {
+            setIsShowModalPost(true)
+        } else {
+            history.push(`/login`);
+            toast.warning('Please login')
+        }
+
     }
     const handleClose = () => {
         setIsShowModalPost(false)
@@ -29,7 +43,6 @@ const Home = (props) => {
     const handleViewDetailPost = (post) => {
         history.push(`/detail/${post.id}`);
     }
-
     return (
         <>
             <div className="container mt-5 pt-3">
@@ -69,6 +82,7 @@ const Home = (props) => {
                     }
                 </div>
             </div>
+
             <button
                 className="add-post-btn position-fixed"
                 onClick={() => handleCreatePost()}

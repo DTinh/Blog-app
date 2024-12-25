@@ -15,7 +15,10 @@ const deletePost = (inputId) => {
 const updatePost = (data) => {
     return axios.put(`http://localhost:1712/api/update`, data)
 }
+const loginUser = (email, password) => {
+    return axios.post(`http://localhost:1712/api/login`, { email, password })
+}
 
 export {
-    getAllPosts, createNewPost, getDetailPosts, deletePost, updatePost
+    getAllPosts, createNewPost, getDetailPosts, deletePost, updatePost, loginUser,
 }

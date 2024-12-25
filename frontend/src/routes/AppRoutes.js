@@ -3,21 +3,17 @@ import { Route, Switch, } from 'react-router-dom';
 // import Register from '../components/Register/Register';
 import Home from '../components/ManageHome/Home';
 import PostDetail from '../components/ManageHome/PostDetail';
-import PrivateRoutes from './PrivateRoutes';
-
+import Login from '../components/Login/Login';
 
 const AppRoutes = (props) => {
-    const Projects = () => {
-        return (
-            <span>Hello projects</span>
-        )
-    }
+
 
     return (
         <>
             <Switch>
-                {/* <PrivateRoutes path='/create' component={Projects} /> */}
-
+                <Route exact path="/login">
+                    <Login />
+                </Route>
 
                 <Route exact path='/'>
                     <Home />

@@ -1,6 +1,6 @@
-import { where } from 'sequelize';
+import { where, Op } from 'sequelize';
 import db from '../models/index';
-
+import bcrypt from 'bcryptjs';
 
 const getAllPost = async () => {
     try {
@@ -155,6 +155,55 @@ const updatePost = async (data) => {
     }
 
 }
+let checkPassword = (inPassword, avPassword) => {
+    if (inPassword === avPassword) {
+        return true;
+    }
+}
+const handleLogin = async (data) => {
+    try {
+        if (!data) {
+            return {
+                errCode: 1,
+                errMessage: 'Missing require prameter',
+                data: ''
+            }
+        }
+        let user = await db.User.findOne({
+            where: { email: data.email }
+        })
+        if (user) {
+            let isCorrectPassword = checkPassword(data.password, user.password);
+            if (isCorrectPassword === true) {
+                return {
+                    errCode: 0,
+                    errMessage: 'Login succeed',
+                    data: data
+                }
+            } else {
+                return {
+                    errCode: 2,
+                    errMessage: 'Your email or password not correct',
+                }
+            }
+        } else {
+            return {
+                errCode: 2,
+                errMessage: 'Your email or password not correct',
+            }
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            errCode: 1,
+            errMessage: 'something wrongs with services',
+            data: []
+        }
+    }
+}
+
+
+
 module.exports = {
-    getAllPost, createNewPost, getDetailPost, deletePost, updatePost
+    getAllPost, createNewPost, getDetailPost, deletePost, updatePost, handleLogin,
 }

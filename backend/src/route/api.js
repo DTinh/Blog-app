@@ -9,6 +9,7 @@ let initWebRoutes = (app) => {
     router.post('/create', homeController.createPost);
     router.delete('/delete', homeController.deletePost);
     router.put('/update', homeController.updatePost);
+    router.post('/login', homeController.handleLogin);
 
     return app.use("/api", router);
 }

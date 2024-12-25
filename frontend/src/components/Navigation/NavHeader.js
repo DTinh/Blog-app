@@ -1,18 +1,47 @@
-import React, { useEffect, useContext, } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import './NavHeader.scss';
-import { NavLink, useLocation } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Logo from '../../assets/img/logo.png';
+import _ from 'lodash';
+import { useHistory } from "react-router-dom";
+
+
 const NavHeader = (props) => {
-    // const location = useLocation();
-    // if (user && user.isAuthenticated === true || location.pathname === '/') {
+    const [isShow, setIsShow] = useState(false);
+    const [account, setAccount] = useState({});
+    const [username, setUsername] = useState('');
+    let history = useHistory();
+
+    const handleLogout = () => {
+        sessionStorage.removeItem("account");
+        window.location.reload();
+    }
+    useEffect(() => {
+        let session = sessionStorage.getItem("account");
+        if (session) {
+            setAccount(JSON.parse(session));
+        }
+    }, [])
+    useEffect(() => {
+        isShowLogout();
+    }, [account])
+    const isShowLogout = () => {
+        if (account && !_.isEmpty(account) && account.isAuthenticated) {
+            setIsShow(true)
+        } else {
+            setIsShow(false)
+        }
+    }
+    const handleLogin = () => {
+        history.push("/login");
+    }
+
     return (
         <>
             <div className='nav-header fixed-top'>
@@ -48,13 +77,20 @@ const NavHeader = (props) => {
                                 </Row>
                             </Form>
                             <Nav>
-                                <Nav.Link className='nav-link'>Welcome DTinh!</Nav.Link>
-                                <NavDropdown title="Setting" id="basic-nav-dropdown" className='navdropdown-item'>
-                                    <NavDropdown.Item href="#action/3.1" >Change Password</NavDropdown.Item>
-                                    <NavDropdown.Item href="#action/3.2">
-                                        Log out
-                                    </NavDropdown.Item>
-                                </NavDropdown>
+                                {isShow ?
+                                    <>
+                                        <span className='nav-link'>Welcome {account.username}!</span>
+                                        <button className='nav-link btn btn-info'
+                                            onClick={() => handleLogout()}
+                                        >Logout</button>
+                                    </>
+                                    : <>
+                                        <button className='nav-link btn btn-info'
+                                            onClick={() => handleLogin()}
+                                        >Login</button>
+                                    </>
+                                }
+
                             </Nav>
                         </Navbar.Collapse>
                     </Container>
