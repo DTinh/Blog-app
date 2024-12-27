@@ -3,10 +3,6 @@ import './NavHeader.scss';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Logo from '../../assets/img/logo.png';
 import _ from 'lodash';
 import { useHistory } from "react-router-dom";
@@ -59,27 +55,11 @@ const NavHeader = (props) => {
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">
-                                {/* <Nav.Link href="/" exact className='nav-link'>Home</Nav.Link> */}
                             </Nav>
-                            <Form inline className='nav-search'>
-                                <Row>
-                                    <Col xs="auto">
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Search"
-                                            className=" mr-sm-2"
-                                        />
-                                    </Col>
-                                    <Col xs="auto">
-                                        <Button type="submit" variant="light"
-                                        >Search</Button>
-                                    </Col>
-                                </Row>
-                            </Form>
                             <Nav>
                                 {isShow ?
                                     <>
-                                        <span className='nav-link'>Welcome {account.username}!</span>
+                                        <span className='nav-link'>Xin chào {account.username}!</span>
                                         <button className='nav-link btn btn-info'
                                             onClick={() => handleLogout()}
                                         >Logout</button>

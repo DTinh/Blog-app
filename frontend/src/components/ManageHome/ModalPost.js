@@ -8,7 +8,6 @@ import _ from 'lodash';
 import { createNewPost, updatePost } from '../../services/apiServices';
 import { toast } from 'react-toastify';
 import CommonUtils from '../../utils/CommonUtils';
-import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 import './ModalPost.scss';
 import { Buffer } from 'buffer';
@@ -25,7 +24,16 @@ const ModalPost = (props) => {
         contentHTML: '',
         image: ''
     }
+    const validInputsDefault = {
+        title: true,
+        description: true,
+        contentMarkdown: true,
+        image: true,
+    }
     const [postData, setPostData] = useState(defaultPostData);
+    const [validInputs, setValiInputs] = useState(validInputsDefault);
+
+
     // const [isOpenReviewImg, setIsOpenReviewImg] = useState(false);
     useEffect(() => {
         if (action === 'UPDATE' && dataModalPost) {
@@ -62,13 +70,7 @@ const ModalPost = (props) => {
             }));
         }
     }
-    // const openPreviewImage = () => {
-    //     if (!postData.previewImgURL) return;
-    //     setIsOpenReviewImg(true)
-    //     // console.log('Opening lightbox with image:', postData.previewImgURL);
-    //     console.log("check isOpenReviewImg", isOpenReviewImg);
 
-    // }
     const handleCloseModalPost = () => {
         props.handleClose();
     }
@@ -77,21 +79,42 @@ const ModalPost = (props) => {
         _postData[name] = value;
         setPostData(_postData);
     }
-    const handleConfirmPost = async () => {
-        let res = action === 'UPDATE' ?
-            await updatePost(postData)
-            : await createNewPost(postData);
-        if (res && res.errCode === 0) {
-            toast.success(res.errMessage);
-            setPostData(defaultPostData);
-            props.handleClose();
-            {
-                action === 'UPDATE' ?
-                    props.fetchDetailPosts()
-                    :
-                    props.fetchPosts()
+    const checkValidateInput = () => {
+        if (action === 'UPDATE') return true;
+        setValiInputs(validInputsDefault);
+        let check = true;
+        let arr = ['title', 'image', 'description', 'contentMarkdown'];
+        for (let i = 0; i < arr.length; i++) {
+            if (!postData[arr[i]]) {
+                let _validInputs = _.cloneDeep(validInputsDefault);
+                _validInputs[arr[i]] = false;
+                setValiInputs(_validInputs);
+                toast.error(`Empty input ${arr[i]}`)
+                check = false;
+                break;
             }
         }
+        return check;
+    }
+    const handleConfirmPost = async () => {
+        let check = checkValidateInput();
+        if (check === true) {
+            let res = action === 'UPDATE' ?
+                await updatePost(postData)
+                : await createNewPost(postData);
+            if (res && res.errCode === 0) {
+                toast.success(res.errMessage);
+                setPostData(defaultPostData);
+                props.handleClose();
+                {
+                    action === 'UPDATE' ?
+                        props.fetchDetailPosts()
+                        :
+                        props.fetchPosts()
+                }
+            }
+        }
+
     }
 
     return (
@@ -109,7 +132,7 @@ const ModalPost = (props) => {
                                 Title (<span className="text-danger">*</span>):
                             </label>
                             <input
-                                className="form-control"
+                                className={validInputs.title ? 'form-control' : 'form-control is-invalid'}
                                 type="text"
                                 value={postData?.title || ''}
                                 onChange={(event) => handleOnChangeInput(event.target.value, 'title')}
@@ -131,7 +154,7 @@ const ModalPost = (props) => {
                                 Description (<span className="text-danger">*</span>):
                             </label>
                             <textarea
-                                className="form-control"
+                                className={validInputs.description ? 'form-control' : 'form-control is-invalid'}
                                 rows="3"
                                 value={postData?.description || ''}
                                 onChange={(event) => handleOnChangeInput(event.target.value, 'description')}
@@ -146,12 +169,6 @@ const ModalPost = (props) => {
                         onChange={handleEditorChange}
                         value={postData?.contentMarkdown || ''}
                     />
-                    {/* {isOpenReviewImg && (
-                        <Lightbox
-                            mainSrc={postData.previewImgURL}
-                            onCloseRequest={() => setIsOpenReviewImg(false)}
-                        />
-                    )} */}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary"

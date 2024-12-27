@@ -4,6 +4,7 @@ import { Route, Switch, } from 'react-router-dom';
 import Home from '../components/ManageHome/Home';
 import PostDetail from '../components/ManageHome/PostDetail';
 import Login from '../components/Login/Login';
+import Register from '../components/Register/Register';
 
 const AppRoutes = (props) => {
 
@@ -13,6 +14,9 @@ const AppRoutes = (props) => {
             <Switch>
                 <Route exact path="/login">
                     <Login />
+                </Route>
+                <Route exact path="/register">
+                    <Register />
                 </Route>
 
                 <Route exact path='/'>

@@ -18,7 +18,12 @@ const updatePost = (data) => {
 const loginUser = (email, password) => {
     return axios.post(`http://localhost:1712/api/login`, { email, password })
 }
-
+const searchPostService = (searchTerm) => {
+    return axios.get(`http://localhost:1712/api/search?searchTerm=${searchTerm}`)
+}
+const registerUser = (data) => {
+    return axios.post(`http://localhost:1712/api/register`, data)
+}
 export {
-    getAllPosts, createNewPost, getDetailPosts, deletePost, updatePost, loginUser,
+    getAllPosts, createNewPost, getDetailPosts, deletePost, updatePost, loginUser, searchPostService, registerUser
 }

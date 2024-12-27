@@ -102,7 +102,7 @@ const PostDetail = (props) => {
                                                                 className='image-detail mb-4'
                                                                 style={{ backgroundImage: `url(${imageBase64})` }}
                                                             ></div>
-                                                            <p className="text-muted">Tác giả: {"Admin"} | Ngày đăng: {formattedDate}</p>
+                                                            <p className="text-muted">Tác giả: {"User"} | Ngày đăng: {formattedDate}</p>
                                                             <div className="content">
                                                                 <div dangerouslySetInnerHTML={{ __html: item.contentHTML }}></div>
                                                             </div>

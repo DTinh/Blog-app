@@ -72,7 +72,31 @@ const handleLogin = async (req, res) => {
         })
     }
 }
-
+const searchPosts = async (req, res) => {
+    try {
+        const searchTerm = req.query.searchTerm;
+        let data = await homeService.searchPosts(searchTerm);
+        return res.status(200).json(data);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Error from the server',
+        });
+    }
+};
+const handleRegister = async (req, res) => {
+    try {
+        let data = await homeService.handleRegister(req.body);
+        return res.status(200).json(data);
+    } catch (e) {
+        console.log(e)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from the server'
+        })
+    }
+}
 module.exports = {
-    getAllPost, createPost, getDetailPost, deletePost, updatePost, handleLogin
+    getAllPost, createPost, getDetailPost, deletePost, updatePost, handleLogin, searchPosts, handleRegister
 }

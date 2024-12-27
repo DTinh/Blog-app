@@ -202,8 +202,79 @@ const handleLogin = async (data) => {
     }
 }
 
+const searchPosts = async (searchTerm) => {
+    try {
+        let posts = await db.Post.findAll({
+            where: {
+                [Op.or]: [
+                    { title: { [Op.like]: `%${searchTerm}%` } },
+                    { description: { [Op.like]: `%${searchTerm}%` } }
+                ],
+            },
+            // attributes: {
+            //     exclude: ['image']
+            // },
+        });
+
+        if (posts.length === 0) {
+            return {
+                errCode: 2,
+                errMessage: 'No posts found with the search term',
+                data: []
+            };
+        } else {
+            return {
+                errCode: 0,
+                errMessage: 'Posts found successfully!',
+                data: posts
+            };
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            errCode: 1,
+            errMessage: 'Something went wrong with the service',
+            data: []
+        };
+    }
+};
+
+const handleRegister = async (data) => {
+    try {
+        if (data.password && data.password.length < 6) {
+            return {
+                errCode: 1,
+                errMessage: 'Your password must have more than 6 letters',
+            };
+        }
+        if (!data.email || !data.password) {
+            return {
+                errCode: 1,
+                errMessage: 'Missing require parameter',
+            };
+        } else {
+            await db.User.create({
+                email: data.email,
+                password: data.password,
+                firstName: data.firstname,
+                lastName: data.lastname,
+            })
+            return {
+                errCode: 0,
+                errMessage: 'Register succeed',
+            };
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            errCode: 1,
+            errMessage: 'Something went wrong with the service',
+            data: []
+        };
+    }
+}
 
 
 module.exports = {
-    getAllPost, createNewPost, getDetailPost, deletePost, updatePost, handleLogin,
+    getAllPost, createNewPost, getDetailPost, deletePost, updatePost, handleLogin, searchPosts, handleRegister
 }

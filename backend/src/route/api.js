@@ -10,6 +10,8 @@ let initWebRoutes = (app) => {
     router.delete('/delete', homeController.deletePost);
     router.put('/update', homeController.updatePost);
     router.post('/login', homeController.handleLogin);
+    router.post('/register', homeController.handleRegister);
+    router.get('/search', homeController.searchPosts);
 
     return app.use("/api", router);
 }
